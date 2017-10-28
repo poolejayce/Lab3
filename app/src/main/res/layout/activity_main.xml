@@ -29,6 +29,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
+                    android:onClick="clear"
                     android:text="C"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />

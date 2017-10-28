@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView screen;
@@ -34,24 +36,39 @@ public class MainActivity extends AppCompatActivity {
         sign = button.getText().toString();
         screen.setText(sign);
         a = Double.parseDouble(str);
+        str="";
     }
 
-    public void calculate(View v)
+    public void clear(View v)
     {
         Button button = (Button) v;
-        str2 = screen.getText().toString();
-        b = Double.parseDouble(str2);
+        a = null;
+        b = null;
+        str = "";
+        str2 = "";
+        sign = "";
+        result = "";
+        screen.setText("0");
+    }
+
+    public void getResult(String sign)
+    {
+        double temp = 0.0;
+        DecimalFormat df = new DecimalFormat("#########.######");
+
         if(sign.equals("+"))
         {
-            result = a+b+ "";
+            temp = Double.valueOf(df.format(a+b));
+
         }
         else if(sign.equals("-"))
         {
-            result = a-b+"";
+            temp = Double.valueOf(df.format(a-b));
+
         }
         else if(sign.equals("*"))
         {
-            result = a*b+"";
+            temp = Double.valueOf(df.format(a*b));
         }
         else if(sign.equals("/"))
         {
@@ -61,21 +78,31 @@ public class MainActivity extends AppCompatActivity {
             }
             else
             {
-                result = a/b+"";
+                temp = Double.valueOf(df.format(a/b));
             }
 
         }
         else if(sign.equals("^"))
         {
-            result = Math.pow(a,b)+"";
+            temp = Double.valueOf(df.format(Math.pow(a,b)));
         }
         else
         {
             screen.setText("k");
         }
+        result = temp + "";
+    }
+
+    public void calculate(View v)
+    {
+        Button button = (Button) v;
+        str2 = screen.getText().toString();
+        b = Double.parseDouble(str2);
+
+        getResult(sign);
+
         screen.setText(result);
         sign = "";
         str="";
-        a=null;
     }
 }
