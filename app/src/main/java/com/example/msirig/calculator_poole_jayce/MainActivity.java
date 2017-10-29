@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,13 +31,73 @@ public class MainActivity extends AppCompatActivity {
         screen.setText(str);
     }
 
-    public void onClickSigns(View v)
+    /*public void onClickSigns(View v)
     {
         Button button = (Button) v;
         sign = button.getText().toString();
         screen.setText(sign);
-        a = Double.parseDouble(str);
-        str="";
+        if(str == ""){
+            screen.setText("Need a value before the operator");
+        }
+        else{
+            a = Double.parseDouble(str);
+            str="";
+        }
+    }*/
+    public ArrayList<String> tokenize()
+    {
+        int length = str.length();
+        String num = "";
+        ArrayList<String> tokens = new ArrayList<>();
+        for(int i = 0;i<length; i++)
+        {
+            Character temp = str.charAt(i);
+            if(temp == '(')
+            {
+                if(!num.isEmpty())
+                {
+                    tokens.add(num);
+                    num = "";
+                }
+                tokens.add(temp.toString());
+            }
+            else if(temp == ')')
+            {
+                if(!num.isEmpty())
+                {
+                    tokens.add(num);
+                    num = "";
+                }
+                tokens.add(temp.toString());
+            }
+            else if(temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == '^')
+            {
+                if(!num.isEmpty())
+                {
+                    tokens.add(num);
+                    num = "";
+                }
+                tokens.add(temp.toString());
+            }
+            else
+            {
+                if(Character.isDigit(temp) || temp == '.')
+                {
+                    num += temp.toString();
+                }
+                if(i==length-1)
+                {
+                    tokens.add(num);
+                }
+            }
+         }
+        screen.setText(tokens.toString());
+        return tokens;
+    }
+
+    public void parseInput(ArrayList<String> input)
+    {
+
     }
 
     public void clear(View v)
@@ -95,14 +156,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculate(View v)
     {
+        ArrayList<String> tokenized;
         Button button = (Button) v;
-        str2 = screen.getText().toString();
-        b = Double.parseDouble(str2);
+        //str2 = screen.getText().toString();
+        //b = Double.parseDouble(str2);
+        tokenized = tokenize();
+        parseInput(tokenized);
+        //getResult(sign);
 
-        getResult(sign);
-
-        screen.setText(result);
-        sign = "";
-        str="";
+        //screen.setText(result);
+        //sign = "";
+        //str="";
     }
 }

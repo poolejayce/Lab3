@@ -37,6 +37,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
+                    android:onClick="onClick"
                     android:text="("
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
@@ -44,6 +45,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
+                    android:onClick="onClick"
                     android:text=")"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
@@ -51,7 +53,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
-                    android:onClick="onClickSigns"
+                    android:onClick="onClick"
                     android:text="^"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
@@ -91,7 +93,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
-                    android:onClick="onClickSigns"
+                    android:onClick="onClick"
                     android:text="/"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
@@ -131,7 +133,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
-                    android:onClick="onClickSigns"
+                    android:onClick="onClick"
                     android:text="*"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
@@ -171,7 +173,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
-                    android:onClick="onClickSigns"
+                    android:onClick="onClick"
                     android:text="-"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
@@ -211,7 +213,7 @@
                 <Button
                     android:layout_width="95dp"
                     android:layout_height="80dp"
-                    android:onClick="onClickSigns"
+                    android:onClick="onClick"
                     android:text="+"
                     android:textSize="40sp"
                     tools:background="@color/colorPrimary" />
