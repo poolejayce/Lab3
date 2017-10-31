@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView screen;
     private String str1,str2,str3,result,str,sign;
     private Double a,b;
+    private int leftParen = 0, rightParen = 0;
     private int mult,div = 5;
     private int add, sub = 0;
     private int exp = 10;
@@ -33,8 +34,251 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View v)
     {
         Button button =(Button) v;
-        str += button.getText().toString();
+        String temp = button.getText().toString();
+        if(canAdd(temp))
+        {
+            str += temp;
+
+        }
         screen.setText(str);
+    }
+
+    public boolean canAdd(String input)
+    {
+        boolean canAdd = false;
+
+        switch (input){
+            case "1":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "2":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "3":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "4":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "5":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "6":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "7":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "8":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "9":
+                if (str.length() == 0)
+                {
+
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")") && str.length()!=0)
+                {
+                    str+="*";
+                }
+                canAdd = true;
+                break;
+            case "0":
+                if (str.equals(""))
+                {
+                    canAdd = true;
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals("0"))
+                {
+                    canAdd = false;
+                }else
+                {
+                    canAdd = true;
+                }
+                break;
+            case ".":
+                if(str.equals(""))
+                {
+                    canAdd = true;
+                }
+                else if(Character.isDigit((str.charAt(str.length() - 1))))
+                {
+                    canAdd = true;
+                }
+                else if (Character.toString((str.charAt(str.length() - 1))).equals(")"))
+                {
+                    str+="*0";
+                    canAdd = true;
+                }
+                else
+                {
+                    str+= "0";
+                    canAdd = true;
+                }
+                break;
+            case "+":
+                if (str.equals(""))
+                {
+
+                }
+                else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
+                {
+                    canAdd = false;
+                }
+                else
+                {
+                    canAdd = true;
+                }
+                break;
+            case "-":
+                if (str.equals(""))
+                {
+
+                }
+                else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
+                {
+                    canAdd = false;
+                }
+                else
+                {
+                    canAdd = true;
+                }
+                break;
+            case "/":
+                if (str.equals(""))
+                {
+
+                }
+                else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
+                {
+                    canAdd = false;
+                }
+                else
+                {
+                    canAdd = true;
+                }
+                break;
+            case "*":
+                if (str.equals(""))
+                {
+
+                }
+                else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
+                {
+                    canAdd = false;
+                }
+                else
+                {
+                    canAdd = true;
+                }
+                break;
+            case "^":
+                if (str.equals(""))
+                {
+
+                }
+                else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
+                {
+                    canAdd = false;
+                }
+                else
+                {
+                    canAdd = true;
+                }
+                break;
+            case "(":
+                if (str.equals(""))
+                {
+                    canAdd = true;
+                }
+                else if (Character.isDigit(str.charAt(str.length() - 1)) || Character.toString(str.charAt(str.length() - 1)).equals(".") || Character.toString(str.charAt(str.length() - 1)).equals(")"))
+                {
+                    str+= "*";
+                    canAdd = true;
+                }
+                else
+                {
+                    canAdd = true;
+                }
+                leftParen++;
+                break;
+            case ")":
+                if (rightParen<leftParen && !Character.toString(str.charAt(str.length() - 1)).equals("("))
+                {
+                    rightParen++;
+                    canAdd = true;
+                }
+                else
+                {
+                    canAdd = false;
+                }
+                break;
+        }
+        return canAdd;
     }
 
     public int getOperatorPrecedence(String operator)
@@ -89,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    //returns the precedence
     public final int precedence(String token1, String token2)
     {
         int toke1 = 0;
