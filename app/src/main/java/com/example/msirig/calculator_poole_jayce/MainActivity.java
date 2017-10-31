@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         str = "";
     }
 
+    //base onclick for when an input button is slected
     public void onClick(View v)
     {
         Button button =(Button) v;
@@ -43,6 +44,72 @@ public class MainActivity extends AppCompatActivity {
         screen.setText(str);
     }
 
+    public boolean divideByZero()
+    {
+        boolean zero = true;
+
+        for(int i = 0; i<str.length(); i++)
+        {
+            if(i <= str.length() - 3) {
+                if (Character.toString(str.charAt(i)).equals("/")) {
+                    if (Character.toString(str.charAt(i + 1)).equals("0")) {
+                        if (!Character.toString(str.charAt(i + 2)).equals(".")) {
+                            zero = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Character.toString(str.charAt(i)).equals("/")) {
+                    if (Character.toString(str.charAt(i + 1)).equals("0")) {
+                        zero = false;
+                    }
+                }
+            }
+        }
+
+        return zero;
+
+    }
+
+    //a boolean function that checks just before  parsing and calculating
+    //to make sure that the input is in correct format
+    public boolean isCorrectFormat()
+    {
+        boolean correct = false;
+
+        if (leftParen != rightParen)
+        {
+            clear1(0);
+            correct = false;
+        }
+        else if(isOperator(Character.toString(str.charAt(str.length() - 1))))
+        {
+            clear1(0);
+            correct = false;
+        }
+        else if(Character.toString(str.charAt(str.length() - 1)).equals("."))
+        {
+            str+= "0";
+            correct = true;
+        }
+        else if(!divideByZero())
+        {
+            clear1(2);
+            correct = false;
+        }
+        else
+        {
+            correct = true;
+        }
+
+        return correct;
+    }
+
+    //a boolean function that checks if the button you clicked for input is valid or not
+    //if it is valid then the button.text will be appended to the input
+    //if it is false nothing will happen meaning it would be an error if it was added
     public boolean canAdd(String input)
     {
         boolean canAdd = false;
@@ -152,6 +219,11 @@ public class MainActivity extends AppCompatActivity {
                 {
                     canAdd = true;
                 }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(")"))
+                {
+                    canAdd = true;
+                    str += "*";
+                }
                 else if(Character.toString(str.charAt(str.length() - 1)).equals("0"))
                 {
                     canAdd = false;
@@ -195,11 +267,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case "-":
-                if (str.equals(""))
+                if (str.equals("") || Character.toString(str.charAt(str.length() - 1)).equals("(") || Character.toString(str.charAt(str.length() - 1)).equals("*")
+                        || Character.toString(str.charAt(str.length() - 1)).equals("/") || Character.toString(str.charAt(str.length() - 1)).equals("^"))
                 {
-
+                    str += "(";
+                    leftParen++;
+                    canAdd = true;
                 }
-                else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
+                else if ((Character.toString(str.charAt(str.length() - 1)).equals("+")) || Character.toString(str.charAt(str.length() - 1)).equals("-") || Character.toString(str.charAt(str.length() - 1)).equals("."))
                 {
                     canAdd = false;
                 }
@@ -267,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                 leftParen++;
                 break;
             case ")":
-                if (rightParen<leftParen && !Character.toString(str.charAt(str.length() - 1)).equals("("))
+                if (rightParen<leftParen && !Character.toString(str.charAt(str.length() - 1)).equals("(") && !Character.toString(str.charAt(str.length() - 1)).equals("-"))
                 {
                     rightParen++;
                     canAdd = true;
@@ -281,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
         return canAdd;
     }
 
+    //return the precedence value of an operator
     public int getOperatorPrecedence(String operator)
     {
         if(operator.equals("+") || operator.equals("-")){
@@ -295,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //boolean check to see if token is in fact an operator
     public boolean isOperator(String token)
     {
         if(token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/") || token.equals("^"))
@@ -306,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+    //return the integer associativity of an operator
     public int getAssociativity(String token)
     {
         int associativity = 0;
@@ -333,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    //returns the precedence
+    //returns the precedence of two operators
     public final int precedence(String token1, String token2)
     {
         int toke1 = 0;
@@ -347,40 +425,19 @@ public class MainActivity extends AppCompatActivity {
         return toke1 - toke2;
     }
 
-
+    //gather all the input into a tokenized arraylist
+    //example input: 7+8.8-(3^2)-5
+    //arraylist = [7,+,8.8,-,(,3,^,2,),-,5]
     public ArrayList<String> tokenize()
     {
         int length = str.length();
-        if(length == 0)
-        {
-            screen.setText("0");
-            onPause();
-        }
 
-        int lp = 0, rp = 0;
         String num = "";
         ArrayList<String> tokens = new ArrayList<>();
         for(int i = 0;i<length; i++)
         {
 
             Character temp = str.charAt(i);
-
-            /*if(i == 0)
-            {
-                if(temp == ')')
-                {
-                    screen.setText("Incorrect Format");
-                    break;
-                    //onPause();
-                }
-            }*/
-
-            /*if(isOperator(Character.toString(str.charAt(length-1))) || isOperator(Character.toString(str.charAt(0))))
-            {
-                screen.setText("Incorrect Format");
-                break;
-                //onPause();
-            }*/
 
             if(temp.equals('('))
             {
@@ -389,20 +446,7 @@ public class MainActivity extends AppCompatActivity {
                     tokens.add(num);
                     num = "";
                 }
-                if(i!=0)
-                {
-                    /*if(!isOperator(Character.toString(str.charAt(i-1))) || str.charAt(i-1) != '(')
-                    {
-                        screen.setText("Incorrect Format");
-                        break;
-                    }*/
-                }
-                /*if(i == length-1)
-                {
-                    screen.setText("Incorrect Format");
-                    break;
-                }*/
-                lp++;
+
                 tokens.add(temp.toString());
             }
             else if(temp.equals(')'))
@@ -412,21 +456,27 @@ public class MainActivity extends AppCompatActivity {
                     tokens.add(num);
                     num = "";
                 }
-                /*if(str.charAt(i-1) == '+' || str.charAt(i-1) == '-' || str.charAt(i-1) == '*' || str.charAt(i-1) == '/' || str.charAt(i-1) == '^')
-                {
-                    screen.setText("Incorrect Format");
-                    break;
-                    //onPause();
-                }*/
-                rp++;
+
                 tokens.add(temp.toString());
             }
-            else if(temp.equals('+') || temp.equals('-') || temp.equals('*') || temp.equals('/') || temp.equals('^'))
+            else if(temp.equals('-'))
             {
-                /*if(isOperator(Character.toString(str.charAt(i-1))) || isOperator(Character.toString(str.charAt(i+1))))
+                if(Character.toString(str.charAt(i-1)).equals("(") || isOperator(Character.toString(str.charAt(i-1))))
                 {
-                    screen.setText("Incorrect Format");
-                }*/
+                    num += "-";
+                }
+
+                if(!num.isEmpty() && !num.equals("-"))
+                {
+                    tokens.add(num);
+                    num = "";
+                }
+                tokens.add(temp.toString());
+
+
+            }
+            else if(temp.equals('+') || temp.equals('*') || temp.equals('/') || temp.equals('^'))
+            {
                 if(!num.isEmpty())
                 {
                     tokens.add(num);
@@ -446,15 +496,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
          }
-         if(lp!=rp)
-         {
-             screen.setText("Incorrect Format");
-             // onPause();
-         }
-        //screen.setText(tokens.toString());
+
         return tokens;
     }
 
+    //put the tokenized arraylist and this will now switch it from infix notation to postfix for calculation
     public String[] parseInput(ArrayList<String> input)
     {
         ArrayList<String> out = new ArrayList<>();
@@ -504,217 +550,219 @@ public class MainActivity extends AppCompatActivity {
         return out.toArray(output);
     }
 
+    //this will take the tokenized postfix array of input and solve it and return the result
     public double solve(String[] tokens)
     {
         Stack<String> stack = new Stack<String>();
+
+        boolean negative = false;
+        int counter = 1,neg = 0;
 
         for(String token : tokens)
         {
             if(!isOperator(token))
             {
+                if(token.charAt(0) == '-' && token.length() > 1)
+                {
+                    if(Character.isDigit(token.charAt(1)))
+                    {
+                        negative = true;
+                        neg += counter;
+                    }
+                }
                 stack.push(token);
+                counter++;
             }
             else
             {
-                Double d2 = Double.valueOf(stack.pop());
-                Double d1 = Double.valueOf(stack.pop());
-                Double result = 0.0;
 
-                if(token.compareTo("+") == 0)
-                {
-                    result = d1+d2;
-                }
-                else if(token.compareTo("-") == 0)
-                {
-                    result = d1-d2;
-                }
-                else if(token.compareTo("*") == 0)
-                {
-                    result = d1*d2;
-                }
-                else if(token.compareTo("/") == 0)
-                {
-                    result = d1/d2;
-                }
-                else
-                {
-                    result = Math.pow(d1,d2);
-                }
-                stack.push(String.valueOf(result));
+               if(negative)
+               {
+                   if(neg == 1)
+                   {
+                       Double d2 = Double.valueOf(stack.pop());
+                       Double d1 = negative(stack.pop());
+                       Double result = 0.0;
+
+                       if(token.compareTo("+") == 0)
+                       {
+                           result = d1+d2;
+                       }
+                       else if(token.compareTo("-") == 0)
+                       {
+                           result = d1-d2;
+                       }
+                       else if(token.compareTo("*") == 0)
+                       {
+                           result = d1*d2;
+                       }
+                       else if(token.compareTo("/") == 0)
+                       {
+                           result = d1/d2;
+                       }
+                       else
+                       {
+                           result = Math.pow(d1,d2);
+                       }
+                       stack.push(String.valueOf(result));
+                   }
+                   else if(neg == 2)
+                   {
+                       Double d2 = negative(stack.pop());
+                       Double d1 = Double.valueOf(stack.pop());
+                       Double result = 0.0;
+
+                       if(token.compareTo("+") == 0)
+                       {
+                           result = d1+d2;
+                       }
+                       else if(token.compareTo("-") == 0)
+                       {
+                           result = d1-d2;
+                       }
+                       else if(token.compareTo("*") == 0)
+                       {
+                           result = d1*d2;
+                       }
+                       else if(token.compareTo("/") == 0)
+                       {
+                           result = d1/d2;
+                       }
+                       else
+                       {
+                           result = Math.pow(d1,d2);
+                       }
+                       stack.push(String.valueOf(result));
+                   }
+                   else if(neg == 3)
+                   {
+                       Double d2 = negative(stack.pop());
+                       Double d1 = negative(stack.pop());
+                       Double result = 0.0;
+
+                       if(token.compareTo("+") == 0)
+                       {
+                           result = d1+d2;
+                       }
+                       else if(token.compareTo("-") == 0)
+                       {
+                           result = d1-d2;
+                       }
+                       else if(token.compareTo("*") == 0)
+                       {
+                           result = d1*d2;
+                       }
+                       else if(token.compareTo("/") == 0)
+                       {
+                           result = d1/d2;
+                       }
+                       else
+                       {
+                           result = Math.pow(d1,d2);
+                       }
+                       stack.push(String.valueOf(result));
+                   }
+               }
+               else
+               {
+                   Double d2 = Double.valueOf(stack.pop());
+                   Double d1 = Double.valueOf(stack.pop());
+                   Double result = 0.0;
+
+                   if(token.compareTo("+") == 0)
+                   {
+                       result = d1+d2;
+                   }
+                   else if(token.compareTo("-") == 0)
+                   {
+                       result = d1-d2;
+                   }
+                   else if(token.compareTo("*") == 0)
+                   {
+                       result = d1*d2;
+                   }
+                   else if(token.compareTo("/") == 0)
+                   {
+                       result = d1/d2;
+                   }
+                   else
+                   {
+                       result = Math.pow(d1,d2);
+                   }
+                   stack.push(String.valueOf(result));
+               }
             }
         }
-        return Double.valueOf((stack.pop()));
+        //DecimalFormat df = new DecimalFormat(".######");
+
+        return Double.valueOf(((stack.pop())));
     }
-    /*public void parse(ArrayList<String> tokens)
+
+    public double negative(String input)
     {
-        ArrayList<String> signs = new ArrayList<>();
-        //ArrayList<Integer> associative = new ArrayList<>();
-        ArrayList<Double> input = new ArrayList<>();
-        ArrayList<Integer> indices = new ArrayList<>();
-        int index;
-        //ArrayList<ArrayList<String>> equations = new ArrayList<ArrayList<String>>();
-        int leftP = 0, rightP = 0;
-        boolean left,right;
+        input = input.substring(1,input.length());
 
-        for(int i = 0; i<tokens.size(); i++)
-        {
-            /*if(tokens.get(i) == "(")
-            {
-                leftP++;
-            }
-            else if(tokens.get(i) == ")")
-            {
-                leftP--;
-            }
-            else if(tokens.get(i) == "+")
-            {
-                signs.add("+");
-                associative.add(0);
-            }
-            else if(tokens.get(i) == "-")
-            {
-                signs.add("-");
-                associative.add(0);
-            }
-            else if(tokens.get(i) == "*")
-            {
-                signs.add("*");
-                associative.add(1);
-            }
-            else if(tokens.get(i) == "/")
-            {
-                signs.add("/");
-                associative.add(1);
-            }
-            else if(tokens.get(i) == "^")
-            {
-                signs.add("^");
-                associative.add(2);
-            }
-            else
-            {
-                input.add(Integer.valueOf(tokens.get(i)));
-            }
-            if(tokens.get(i) == "(")
-            {
-                indices.add(i);
-            }
-            if(i == 0)
-            {
-                if(isOperator(tokens.get(i)) || tokens.get(i) == ")")
-                {
-                    screen.setText("Invalid Format");
-                    break;
-                    // onPause();
-                }
-                else if(tokens.get(i) == "(")
-                {
-                    left = true;
-                    leftP++;
-                }
-                else
-                {
-                    input.add(Double.valueOf(tokens.get(i)));
-                }
-            }
-            else
-            {
+        double neg = Double.valueOf(input);
 
-            }
+        neg = neg - (neg * 2);
 
-        }
-    }*/
+        return neg;
+    }
 
-    /*public int nestedParenthesis(ArrayList<String> tokens, int index)
-    {
-        int value = 0;
-
-        for(int i = index+1; i<tokens.size(); i++)
-        {
-            if(tokens.get(i) == ")")
-            {
-                return i;
-            }
-            else if(tokens.get(i) == "(")
-            {
-                return i;
-            }
-        }
-    }*/
-
-
+    //clear button function which resets all global fields essentially starting over
     public void clear(View v)
     {
         Button button = (Button) v;
-        a = null;
-        b = null;
         str = "";
-        str2 = "";
-        sign = "";
         result = "";
+        leftParen = 0;
+        rightParen = 0;
         screen.setText("0");
     }
 
-    public void getResult(String sign)
+    //clear1 is a function that is called after a result is printed to the screen so that
+    //when the user starts to type in new numbers for another function the string is wiped.
+    public void clear1(int i)
     {
-        double temp = 0.0;
-        DecimalFormat df = new DecimalFormat("#########.######");
-
-        if(sign.equals("+"))
+        if(i == 0)
         {
-            temp = Double.valueOf(df.format(a+b));
-
+            result = "";
+            leftParen = 0;
+            rightParen = 0;
+            str = "";
+            screen.setText("Invalid Format");
         }
-        else if(sign.equals("-"))
+        else if (i == 2)
         {
-            temp = Double.valueOf(df.format(a-b));
-
+            result = "";
+            leftParen = 0;
+            rightParen = 0;
+            str = "";
+            screen.setText("Can't divide by 0");
         }
-        else if(sign.equals("*"))
-        {
-            temp = Double.valueOf(df.format(a*b));
+        else {
+            result = "";
+            leftParen = 0;
+            rightParen = 0;
+            str = "";
         }
-        else if(sign.equals("/"))
-        {
-            if(b == 0.0)
-            {
-                result = "Can't divide by 0";
-            }
-            else
-            {
-                temp = Double.valueOf(df.format(a/b));
-            }
-
-        }
-        else if(sign.equals("^"))
-        {
-            temp = Double.valueOf(df.format(Math.pow(a,b)));
-        }
-        else
-        {
-            screen.setText("k");
-        }
-        result = temp + "";
     }
 
+    //main run method that drives the program when the equal button is pressed.
     public void calculate(View v)
     {
         ArrayList<String> tokenized;
         String[] tokens;
-        double solution;
-        Button button = (Button) v;
-        //str2 = screen.getText().toString();
-        //b = Double.parseDouble(str2);
         tokenized = tokenize();
-        //parse(tokenized);
-        tokens = parseInput(tokenized);
-        screen.setText(Double.toString(solve(tokens)));
+        if(isCorrectFormat())
+        {
+            tokens = parseInput(tokenized);
+            screen.setText(Double.toString(solve(tokens)));
+            clear1(1);
+        }
+        else{
 
+        }
 
-        //getResult(sign);
-
-        //screen.setText(result);
-        //sign = "";
-        //str="";
     }
 }
