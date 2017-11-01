@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
                 leftParen++;
                 break;
             case ")":
-                if (rightParen<leftParen && !Character.toString(str.charAt(str.length() - 1)).equals("(") && !Character.toString(str.charAt(str.length() - 1)).equals("-"))
+                if (rightParen<leftParen && !Character.toString(str.charAt(str.length() - 1)).equals("(") && !isOperator(Character.toString(str.charAt(str.length() - 1))))
                 {
                     rightParen++;
                     canAdd = true;
