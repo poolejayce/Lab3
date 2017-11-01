@@ -511,8 +511,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     num += temp;
                 }
-
-                if(!num.isEmpty() && !num.equals("-"))
+                else if(!num.isEmpty() && !num.equals("-"))
                 {
                     tokens.add(num);
                     num = "";
