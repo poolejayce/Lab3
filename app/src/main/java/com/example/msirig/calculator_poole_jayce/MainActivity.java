@@ -14,12 +14,8 @@ import java.util.Stack;
 public class MainActivity extends AppCompatActivity {
 
     private TextView screen;
-    private String str1,str2,str3,result,str,sign;
-    private Double a,b;
+    private String result,str;
     private int leftParen = 0, rightParen = 0;
-    private int mult,div = 5;
-    private int add, sub = 0;
-    private int exp = 10;
 
 
 
@@ -44,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         screen.setText(str);
     }
 
+    //check if there is a divide by zero in str
     public boolean divideByZero()
     {
         boolean error = false;
@@ -118,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         return correct;
     }
 
+    //make sure decimal is used correctly
     public boolean decimalCheck()
     {
         boolean dec = true;
@@ -541,6 +539,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //put the tokenized arraylist and this will now switch it from infix notation to postfix for calculation
+    //for example: (7+4) * 5.5 ^ 2   . . . will turn into
+    //              7 4 + 5.5 2 ^ *
     public String[] parseInput(ArrayList<String> input)
     {
         ArrayList<String> out = new ArrayList<>();
@@ -591,6 +591,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //this will take the tokenized postfix array of input and solve it and return the result
+    //example postfix from earlier 7 4 + 5.5 2 ^ *
+    //also capable of handling negative numbers
+    /*
+        iteration (1): stack(7) tokens(7,4,+,5.5,2,^,*)
+        iteration (2): stack(7,2) tokens(7,4,+,5.5,2,^,*)
+            it will pop off values 2, and 7, because it hit an operator
+            and then recognize the + sign and add the two values and push the result onto the stack
+        iteration (3): stack(9,5.5) tokens(7,4,+,5.5,2,^,*)
+        iteration (4): stack(9,5.5,2) tokens(7,4,+,5.5,2,^,*)
+            it will pop off values 2 and 5.5, because it hit an operator
+            and then recognize the ^ and have the result = 5.5^2 and push it the stack
+        iteration (5): stack(9,30.25) tokens(7,4,+,5.5,2,^,*)
+            it will then pop off the last two values 9 and 30.25 because it hit the last operator
+            and then recognize the * and multiply 9 and 30.25 and then push the result onto the stack
+        iteration (6): stack(272.25) tokens(7,4,+,5.5,2,^,*)
+            since it has reached the end of tokens it will then return whatever is left on the stack
+     */
     public double solve(String[] tokens)
     {
         Stack<String> stack = new Stack<String>();
@@ -801,6 +818,7 @@ public class MainActivity extends AppCompatActivity {
         return Double.valueOf(((stack.pop())));
     }
 
+    //this checks if a double is negative
     public boolean isNegative(Double input)
     {
         boolean isNegative;
@@ -815,6 +833,7 @@ public class MainActivity extends AppCompatActivity {
         return isNegative;
     }
 
+    //this will take a string input of an input number and return the negative double version of it
     public double negative(String input)
     {
         input = input.substring(1,input.length());
