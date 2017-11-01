@@ -302,17 +302,26 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case "-":
-                if (str.equals("") || Character.toString(str.charAt(str.length() - 1)).equals("(") || Character.toString(str.charAt(str.length() - 1)).equals("*")
-                        || Character.toString(str.charAt(str.length() - 1)).equals("/") || Character.toString(str.charAt(str.length() - 1)).equals("^")
-                        || (Character.toString(str.charAt(str.length() - 1)).equals("+")))
+                if (str.equals("") || Character.toString(str.charAt(str.length() - 1)).equals("(") || (isOperator(Character.toString(str.charAt(str.length() - 1))) && !Character.toString(str.charAt(str.length() - 1)).equals("-")))
                 {
-                    str += "(";
-                    leftParen++;
+                    //str += "(";
+                    //leftParen++;
                     canAdd = true;
                 }
                 else if (Character.toString(str.charAt(str.length() - 1)).equals("-") || Character.toString(str.charAt(str.length() - 1)).equals("."))
                 {
-                    canAdd = false;
+                    if(Character.toString(str.charAt(str.length() - 1)).equals("-"))
+                    {
+                        canAdd = true;
+                        if(Character.toString(str.charAt(str.length() - 2)).equals("-"))
+                        {
+                            canAdd = false;
+                        }
+                    }
+                    else
+                    {
+                        canAdd = false;
+                    }
                 }
                 else
                 {
@@ -498,7 +507,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(temp.equals('-'))
             {
-                if(Character.toString(str.charAt(i-1)).equals("(") || isOperator(Character.toString(str.charAt(i-1))))
+                if(i == 0 || Character.toString(str.charAt(i-1)).equals("(") || isOperator(Character.toString(str.charAt(i-1))))
                 {
                     num += temp;
                 }
@@ -507,6 +516,9 @@ public class MainActivity extends AppCompatActivity {
                 {
                     tokens.add(num);
                     num = "";
+                    tokens.add(temp.toString());
+                }else
+                {
                     tokens.add(temp.toString());
                 }
 
