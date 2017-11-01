@@ -303,13 +303,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "-":
                 if (str.equals("") || Character.toString(str.charAt(str.length() - 1)).equals("(") || Character.toString(str.charAt(str.length() - 1)).equals("*")
-                        || Character.toString(str.charAt(str.length() - 1)).equals("/") || Character.toString(str.charAt(str.length() - 1)).equals("^"))
+                        || Character.toString(str.charAt(str.length() - 1)).equals("/") || Character.toString(str.charAt(str.length() - 1)).equals("^")
+                        || (Character.toString(str.charAt(str.length() - 1)).equals("+")))
                 {
                     str += "(";
                     leftParen++;
                     canAdd = true;
                 }
-                else if ((Character.toString(str.charAt(str.length() - 1)).equals("+")) || Character.toString(str.charAt(str.length() - 1)).equals("-") || Character.toString(str.charAt(str.length() - 1)).equals("."))
+                else if (Character.toString(str.charAt(str.length() - 1)).equals("-") || Character.toString(str.charAt(str.length() - 1)).equals("."))
                 {
                     canAdd = false;
                 }
@@ -401,7 +402,8 @@ public class MainActivity extends AppCompatActivity {
         {
             return 5;
         }
-        else{
+        else
+        {
             return 10;
         }
     }
@@ -500,15 +502,12 @@ public class MainActivity extends AppCompatActivity {
                 {
                     num += temp;
                 }
-                else if(Character.isDigit(str.charAt(i-1)))
-                {
-                    tokens.add(temp.toString());
-                }
 
                 if(!num.isEmpty() && !num.equals("-"))
                 {
                     tokens.add(num);
                     num = "";
+                    tokens.add(temp.toString());
                 }
 
 
