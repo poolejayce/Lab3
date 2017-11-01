@@ -46,30 +46,41 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean divideByZero()
     {
-        boolean zero = true;
+        boolean error = false;
 
         for(int i = 0; i<str.length(); i++)
         {
-            if(i <= str.length() - 3) {
-                if (Character.toString(str.charAt(i)).equals("/")) {
-                    if (Character.toString(str.charAt(i + 1)).equals("0")) {
-                        if (!Character.toString(str.charAt(i + 2)).equals(".")) {
-                            zero = false;
+            if(Character.toString(str.charAt(i)).equals("/"))
+            {
+                if (Character.toString(str.charAt(i+1)).equals("0"))
+                {
+                    error = true;
+                    for(int j = i+2; j<str.length(); j++)
+                    {
+                        if(Character.isDigit(str.charAt(j)) && !Character.toString(str.charAt(j)).equals("0"))
+                        {
+                            error = false;
+                            break;
+                        }
+                        else if(isOperator(Character.toString(str.charAt(j))) || Character.toString(str.charAt(j)).equals("(") || Character.toString(str.charAt(j)).equals(")") || j == str.length()-1)
+                        {
+                            error = true;
+                            break;
                         }
                     }
                 }
-            }
-            else
-            {
-                if (Character.toString(str.charAt(i)).equals("/")) {
-                    if (Character.toString(str.charAt(i + 1)).equals("0")) {
-                        zero = false;
-                    }
+                else
+                {
+
                 }
+            }
+            if(error)
+            {
+                break;
             }
         }
 
-        return zero;
+        return error;
 
     }
 
@@ -94,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             str+= "0";
             correct = true;
         }
-        else if(!divideByZero())
+        else if(divideByZero())
         {
             clear1(2);
             correct = false;
@@ -105,6 +116,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return correct;
+    }
+
+    public boolean decimalCheck()
+    {
+        boolean dec = true;
+        for (int i = str.length() - 2; i>=0; i--)
+        {
+            if(Character.toString(str.charAt(i)).equals("."))
+            {
+                dec = false;
+                break;
+            }
+            else if(isOperator(Character.toString(str.charAt(i))))
+            {
+                dec = true;
+                break;
+
+            }
+        }
+        return dec;
     }
 
     //a boolean function that checks if the button you clicked for input is valid or not
@@ -224,10 +255,7 @@ public class MainActivity extends AppCompatActivity {
                     canAdd = true;
                     str += "*";
                 }
-                else if(Character.toString(str.charAt(str.length() - 1)).equals("0"))
-                {
-                    canAdd = false;
-                }else
+                else
                 {
                     canAdd = true;
                 }
@@ -235,7 +263,12 @@ public class MainActivity extends AppCompatActivity {
             case ".":
                 if(str.equals(""))
                 {
+                    str+="0";
                     canAdd = true;
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals(".") || !decimalCheck())
+                {
+                    canAdd = false;
                 }
                 else if(Character.isDigit((str.charAt(str.length() - 1))))
                 {
@@ -260,6 +293,10 @@ public class MainActivity extends AppCompatActivity {
                 else if (isOperator(Character.toString(str.charAt(str.length() - 1))) || Character.toString(str.charAt(str.length() - 1)).equals("("))
                 {
                     canAdd = false;
+                }
+                else if(Character.toString(str.charAt(str.length() - 1)).equals("."))
+                {
+                    str+= "0";
                 }
                 else
                 {
@@ -463,7 +500,11 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(Character.toString(str.charAt(i-1)).equals("(") || isOperator(Character.toString(str.charAt(i-1))))
                 {
-                    num += "-";
+                    num += temp;
+                }
+                else if(Character.isDigit(str.charAt(i-1)))
+                {
+                    tokens.add(temp.toString());
                 }
 
                 if(!num.isEmpty() && !num.equals("-"))
@@ -471,7 +512,6 @@ public class MainActivity extends AppCompatActivity {
                     tokens.add(num);
                     num = "";
                 }
-                tokens.add(temp.toString());
 
 
             }
@@ -555,30 +595,50 @@ public class MainActivity extends AppCompatActivity {
     {
         Stack<String> stack = new Stack<String>();
 
-        boolean negative = false;
-        int counter = 1,neg = 0;
+        boolean negative = false, negative2 = false;
 
         for(String token : tokens)
         {
             if(!isOperator(token))
             {
-                if(token.charAt(0) == '-' && token.length() > 1)
-                {
-                    if(Character.isDigit(token.charAt(1)))
-                    {
-                        negative = true;
-                        neg += counter;
-                    }
-                }
                 stack.push(token);
-                counter++;
             }
             else
             {
-
-               if(negative)
+                Double test = 0.0;
+                Double test2 = 0.0;
+                test2 = Double.valueOf(stack.pop());
+                test = Double.valueOf(stack.pop());
+                if(isNegative(test) && !isNegative(test2))
+                {
+                    negative = true;
+                    negative2 = false;
+                    stack.push(String.valueOf(test));
+                    stack.push(String.valueOf(test2));
+                }
+                else if(isNegative(test2) && !isNegative(test))
+                {
+                    negative = false;
+                    negative2 = true;
+                    stack.push(String.valueOf(test));
+                    stack.push(String.valueOf(test2));
+                }
+                else if(isNegative(test) && isNegative(test2))
+                {
+                    negative = true;
+                    negative2 = true;
+                    stack.push(String.valueOf(test));
+                    stack.push(String.valueOf(test2));
+                }
+                else{
+                    negative = false;
+                    negative2 = false;
+                    stack.push(String.valueOf(test));
+                    stack.push(String.valueOf(test2));
+                }
+                if(negative || negative2)
                {
-                   if(neg == 1)
+                   if(negative && !negative2)
                    {
                        Double d2 = Double.valueOf(stack.pop());
                        Double d1 = negative(stack.pop());
@@ -604,9 +664,21 @@ public class MainActivity extends AppCompatActivity {
                        {
                            result = Math.pow(d1,d2);
                        }
+
+                       if(isNegative(result))
+                       {
+                           negative = true;
+                           negative2 = false;
+                       }
+                       else
+                       {
+                           negative = false;
+                           negative2 = false;
+                       }
+
                        stack.push(String.valueOf(result));
                    }
-                   else if(neg == 2)
+                   else if(negative2 && !negative)
                    {
                        Double d2 = negative(stack.pop());
                        Double d1 = Double.valueOf(stack.pop());
@@ -632,9 +704,20 @@ public class MainActivity extends AppCompatActivity {
                        {
                            result = Math.pow(d1,d2);
                        }
+
+                       if(isNegative(result))
+                       {
+                           negative = true;
+                           negative2 = false;
+                       }
+                       else
+                       {
+                           negative = false;
+                           negative2 = false;
+                       }
                        stack.push(String.valueOf(result));
                    }
-                   else if(neg == 3)
+                   else if(negative && negative2)
                    {
                        Double d2 = negative(stack.pop());
                        Double d1 = negative(stack.pop());
@@ -659,6 +742,16 @@ public class MainActivity extends AppCompatActivity {
                        else
                        {
                            result = Math.pow(d1,d2);
+                       }
+                       if(isNegative(result))
+                       {
+                           negative = true;
+                           negative2 = false;
+                       }
+                       else
+                       {
+                           negative = false;
+                           negative2 = false;
                        }
                        stack.push(String.valueOf(result));
                    }
@@ -689,6 +782,16 @@ public class MainActivity extends AppCompatActivity {
                    {
                        result = Math.pow(d1,d2);
                    }
+                   if(isNegative(result))
+                   {
+                       negative = true;
+                       negative2 = false;
+                   }
+                   else
+                   {
+                       negative = false;
+                       negative2 = false;
+                   }
                    stack.push(String.valueOf(result));
                }
             }
@@ -696,6 +799,20 @@ public class MainActivity extends AppCompatActivity {
         //DecimalFormat df = new DecimalFormat(".######");
 
         return Double.valueOf(((stack.pop())));
+    }
+
+    public boolean isNegative(Double input)
+    {
+        boolean isNegative;
+
+        if (input < 0){
+            isNegative = true;
+        }
+        else{
+            isNegative = false;
+        }
+
+        return isNegative;
     }
 
     public double negative(String input)
