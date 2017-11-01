@@ -97,15 +97,15 @@ public class MainActivity extends AppCompatActivity {
             clear1(0);
             correct = false;
         }
-        else if(Character.toString(str.charAt(str.length() - 1)).equals("."))
-        {
-            str+= "0";
-            correct = true;
-        }
         else if(divideByZero())
         {
             clear1(2);
             correct = false;
+        }
+        else if(Character.toString(str.charAt(str.length() - 1)).equals("."))
+        {
+            str+= "0";
+            correct = true;
         }
         else
         {
